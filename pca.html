@@ -1,0 +1,116 @@
+El desarrollo matemático del **Análisis de Componentes Principales (ACP)** se fundamenta en la optimización con restricciones utilizando álgebra matricial y multiplicadores de Lagrange.
+
+---
+
+### 1. Definición del Problema
+Consideremos un vector de \\(p\\) variables aleatorias \\(X = (X_1, X_2, \dots, X_p)^T\\) con media \\(\mu\\) y matriz de varianzas-covarianzas \\(\Sigma\\) (de dimensión \\(p \times p\\)).
+
+Buscamos transformar \\(X\\) en un nuevo conjunto de variables \\(Z = (Z_1, Z_2, \dots, Z_p)^T\\) mediante combinaciones lineales ortogonales:
+
+\\[Z_k = \alpha_k^T X = \alpha_{k1}X_1 + \alpha_{k2}X_2 + \dots + \alpha_{kp}X_p \quad (k = 1, 2, \dots, p)\\]
+
+donde \\(\alpha_k = (\alpha_{k1}, \alpha_{k2}, \dots, \alpha_{kp})^T\\) es el vector de coeficientes o cargas (*loadings*).
+
+---
+
+### 2. Deducción del Primer Componente Principal (\\(Z_1\\))
+
+La varianza del primer componente \\(Z_1 = \alpha_1^T X\\) viene dada por la forma cuadrática:
+
+\\[\text{Var}(Z_1) = \text{Var}(\alpha_1^T X) = \alpha_1^T \Sigma \alpha_1\\]
+
+Para evitar que \\(\text{Var}(Z_1)\\) crezca indefinidamente multiplicando \\(\alpha_1\\) por una constante, se impone la **restricción de normalización** de longitud unitaria:
+
+\\[\alpha_1^T \alpha_1 = \sum_{j=1}^p \alpha_{1j}^2 = 1\\]
+
+#### Optimización mediante Multiplicadores de Lagrange
+Se plantea la función Lagrangiana \\(\mathcal{L}(\alpha_1, \lambda_1)\\):
+
+\\[\mathcal{L}(\alpha_1, \lambda_1) = \alpha_1^T \Sigma \alpha_1 - \lambda_1 (\alpha_1^T \alpha_1 - 1)\\]
+
+Derivando con respecto al vector de coeficientes \\(\alpha_1\\) e igualando a cero:
+
+\\[\frac{\partial \mathcal{L}}{\partial \alpha_1} = 2 \Sigma \alpha_1 - 2 \lambda_1 \alpha_1 = 0 \implies (\Sigma - \lambda_1 I_p) \alpha_1 = 0\\]
+
+Para que exista una solución no nula (\\(\alpha_1 \neq 0\\)), el determinante debe anularse, lo que conduce a la **ecuación característica**:
+
+\\[|\Sigma - \lambda_1 I_p| = 0\\]
+
+Esto demuestra que \\(\lambda_1\\) es un **autovalor** (valor propio) de la matriz de covarianzas \\(\Sigma\\), y \\(\alpha_1\\) es su **autovector** asociado.
+
+Sustituyendo \\(\Sigma \alpha_1 = \lambda_1 \alpha_1\\) en la expresión de la varianza:
+
+\\[\text{Var}(Z_1) = \alpha_1^T \Sigma \alpha_1 = \alpha_1^T (\lambda_1 \alpha_1) = \lambda_1 (\alpha_1^T \alpha_1) = \lambda_1\\]
+
+Por consiguiente, para maximizar la varianza explicada por el primer componente, se selecciona \\(\lambda_1\\) como el **mayor autovalor** de \\(\Sigma\\), y \\(\alpha_1\\) es el autovector unitario correspondiente.
+
+---
+
+### 3. Deducción del Segundo Componente Principal (\\(Z_2\\))
+
+El segundo componente \\(Z_2 = \alpha_2^T X\\) busca maximizar \\(\text{Var}(Z_2) = \alpha_2^T \Sigma \alpha_2\\) sujeto a dos restricciones:
+1. Normalización: \\(\alpha_2^T \alpha_2 = 1\\).
+2. Incorrelación con \\(Z_1\\): \\(\text{Cov}(Z_1, Z_2) = \alpha_2^T \Sigma \alpha_1 = \lambda_1 \alpha_2^T \alpha_1 = 0 \implies \alpha_2^T \alpha_1 = 0\\) (ortogonalidad).
+
+Planteando el Lagrangiano con los multiplicadores \\(\lambda_2\\) y \\(\phi\\):
+
+\\[\mathcal{L}(\alpha_2, \lambda_2, \phi) = \alpha_2^T \Sigma \alpha_2 - \lambda_2 (\alpha_2^T \alpha_2 - 1) - \phi (\alpha_2^T \alpha_1)\\]
+
+Derivando con respecto a \\(\alpha_2\\):
+
+\\[2 \Sigma \alpha_2 - 2 \lambda_2 \alpha_2 - \phi \alpha_1 = 0\\]
+
+Multiplicando por la izquierda por \\(\alpha_1^T\\) y usando las restricciones de ortogonalidad (\\(\alpha_1^T \alpha_2 = 0\\)) y normalización (\\(\alpha_1^T \alpha_1 = 1\\)), se obtiene \\(\phi = 0\\). La ecuación se reduce a:
+
+\\[(\Sigma - \lambda_2 I_p) \alpha_2 = 0\\]
+
+Por lo tanto, \\(\lambda_2\\) es el **segundo autovalor más grande** de \\(\Sigma\\), y \\(\alpha_2\\) es el autovector ortogonal correspondiente, cumpliéndose que \\(\text{Var}(Z_2) = \lambda_2\\).
+
+---
+
+### 4. Generalización para los \\(p\\) Componentes
+
+Estructurando la solución completa para \\(k = 1, 2, \dots, p\\):
+
+1. **Ordenamiento de autovalores**:
+   \\[\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_p \ge 0\\]
+2. **Ortonormalidad de autovectores**:
+   \\[\alpha_k^T \alpha_j = \begin{cases} 1 & \text{si } k = j \\ 0 & \text{si } k \neq j \end{cases}\\]
+3. **Varianza de cada componente**:
+   \\[\text{Var}(Z_k) = \alpha_k^T \Sigma \alpha_k = \lambda_k\\]
+
+---
+
+### 5. Conservación de Varianza y Descomposición Espectral
+
+* **Varianza Total**: La traza de la matriz de covarianzas es igual a la suma de las varianzas de las variables originales y también a la suma de todos los autovalores:
+
+  \\[\text{Varianza Total} = \text{tr}(\Sigma) = \sum_{j=1}^p \text{Var}(X_j) = \sum_{k=1}^p \lambda_k\\]
+
+* **Proporción de Varianza Explicada**: La contribución relativa del componente \\(k\\)-ésimo es:
+
+  \\[\eta_k = \frac{\lambda_k}{\sum_{j=1}^p \lambda_j} = \frac{\lambda_k}{\text{tr}(\Sigma)}\\]
+
+* **Descomposición Espectral de \\(\Sigma\\)**: La matriz de covarianzas se factoriza como:
+
+  \\[\Sigma = A \Lambda A^T = \sum_{k=1}^p \lambda_k \alpha_k \alpha_k^T\\]
+
+  donde \\(A = (\alpha_1, \alpha_2, \dots, \alpha_p)\\) es la matriz ortogonal de autovectores y \\(\Lambda = \text{diag}(\lambda_1, \lambda_2, \dots, \lambda_p)\\).
+
+---
+
+### 6. Expresión Muestral y Puntuaciones (\\(Z = X A\\))
+
+Dada una matriz de datos centrados \\(X\\) de dimensión \\(n \times p\\), las puntuaciones muestrales (*scores*) de los individuos sobre los componentes principales se calculan mediante el producto matricial:
+
+\\[Z = X A\\]
+
+Matrencialmente, esto equivale a aplicar la **Descomposición en Valores Singulares (SVD)** a la matriz de datos \\(X\\):
+
+\\[X = U L A^T\\]
+
+donde \\(U\\) (\\(n \times r\\)) contiene los autovectores normados del espacio de los individuos (\\(X X^T\\)), \\(A\\) (\\(p \times r\\)) contiene los autovectores del espacio de las variables (\\(X^T X\\)), y \\(L\\) es una matriz diagonal con los valores singulares \\(l_k^{1/2} = \sqrt{(n-1)\lambda_k}\\).
+
+---
+
+💡 **¿Te gustaría profundizar en las ecuaciones cuando el ACP se realiza sobre la matriz de correlaciones \\(R\\) (ACP normado) en lugar de la matriz de covarianzas \\(\Sigma\\)?**
